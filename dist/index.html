@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PatternText — word / icon pattern generator</title>
+    <script type="module" crossorigin src="/assets/index-lUxRceK1.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C54zffcv.css">
+  </head>
+  <body>
+    <div class="app">
+      <aside class="panel">
+        <h1>PatternText</h1>
+        <p class="hint">Words alternate with an icon on a checkerboard lattice.</p>
+
+        <section>
+          <label for="words">Words <span class="sub">(comma separated)</span></label>
+          <textarea id="words" rows="3" spellcheck="false">love, peace, joy, stay wild</textarea>
+          <p class="hint tight">An entry with a space — <code>stay wild</code> — stacks its words.</p>
+        </section>
+
+        <section>
+          <label for="icon">Icon</label>
+          <div class="icon-grid" id="iconGrid"></div>
+          <label for="customIcon" class="sub-label">Custom icon <span class="sub">(path data or a full &lt;svg&gt;)</span></label>
+          <textarea id="customIcon" rows="2" spellcheck="false" placeholder="M12 2 L22 12 L12 22 L2 12 Z"></textarea>
+          <div class="row">
+            <label class="check"><input type="checkbox" id="customStroke" /> stroke instead of fill</label>
+          </div>
+        </section>
+
+        <section>
+          <label>Layout</label>
+          <div class="row">
+            <label class="radio"><input type="radio" name="mode" value="grid" checked /> Grid</label>
+            <label class="radio"><input type="radio" name="mode" value="flow" /> Flow</label>
+          </div>
+          <div class="field"><label for="width">Width</label><input type="number" id="width" value="1200" min="100" max="8000" step="10" /></div>
+          <div class="field"><label for="height">Height</label><input type="number" id="height" value="800" min="100" max="8000" step="10" /></div>
+          <div class="field"><label for="gapX">Gap X</label><input type="range" id="gapX" min="0" max="200" value="24" /><output for="gapX"></output></div>
+          <div class="field"><label for="gapY">Gap Y</label><input type="range" id="gapY" min="0" max="200" value="24" /><output for="gapY"></output></div>
+          <div class="field"><label for="rotation">Rotate</label><input type="range" id="rotation" min="-90" max="90" value="0" /><output for="rotation"></output></div>
+        </section>
+
+        <section>
+          <label>Type</label>
+          <div class="field"><label for="fontFamily">Font</label>
+            <select id="fontFamily">
+              <option value="Helvetica, Arial, sans-serif">Helvetica / Arial</option>
+              <option value="Georgia, 'Times New Roman', serif">Georgia / Times</option>
+              <option value="'Courier New', monospace">Courier</option>
+              <option value="Impact, 'Arial Black', sans-serif">Impact</option>
+              <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+              <option value="Verdana, Geneva, sans-serif">Verdana</option>
+              <option value="'Brush Script MT', cursive">Brush Script</option>
+            </select>
+          </div>
+          <div class="field"><label for="fontSize">Size</label><input type="range" id="fontSize" min="6" max="160" value="34" /><output for="fontSize"></output></div>
+          <div class="field"><label for="fontWeight">Weight</label>
+            <select id="fontWeight">
+              <option>300</option><option selected>400</option><option>500</option><option>600</option><option>700</option><option>900</option>
+            </select>
+          </div>
+          <div class="field"><label for="letterSpacing">Tracking</label><input type="range" id="letterSpacing" min="-5" max="30" value="0" /><output for="letterSpacing"></output></div>
+          <div class="field"><label for="lineHeight">Leading</label><input type="range" id="lineHeight" min="0.7" max="2.5" step="0.05" value="1.05" /><output for="lineHeight"></output></div>
+          <div class="row">
+            <label class="check"><input type="checkbox" id="uppercase" /> uppercase</label>
+          </div>
+        </section>
+
+        <section>
+          <label>Icon size</label>
+          <div class="field"><label for="iconSize">Size</label><input type="range" id="iconSize" min="2" max="160" value="22" /><output for="iconSize"></output></div>
+          <div class="field"><label for="strokeWidth">Stroke</label><input type="range" id="strokeWidth" min="0.5" max="6" step="0.1" value="2" /><output for="strokeWidth"></output></div>
+          <div class="field"><label for="iconRotate">Tilt</label><input type="range" id="iconRotate" min="-180" max="180" value="0" /><output for="iconRotate"></output></div>
+        </section>
+
+        <section>
+          <label>Colours</label>
+          <div class="field"><label for="bgColor">Background</label><input type="color" id="bgColor" value="#faf7f0" /></div>
+          <div class="field"><label for="textColor">Text</label><input type="color" id="textColor" value="#1b1b1b" /></div>
+          <div class="field"><label for="iconColor">Icon</label><input type="color" id="iconColor" value="#c8452f" /></div>
+          <div class="row">
+            <label class="check"><input type="checkbox" id="transparent" /> transparent background</label>
+          </div>
+        </section>
+
+        <section class="actions">
+          <button id="downloadSvg" class="primary">Download SVG</button>
+          <button id="downloadPng">Download PNG</button>
+          <button id="copySvg">Copy SVG</button>
+          <button id="reset" class="ghost">Reset</button>
+        </section>
+      </aside>
+
+      <main class="stage">
+        <div class="preview" id="preview"></div>
+        <div class="status" id="status"></div>
+      </main>
+    </div>
+  </body>
+</html>
