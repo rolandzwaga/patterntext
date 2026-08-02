@@ -10,7 +10,7 @@ export const DEFAULTS = {
   gapX: 24,
   gapY: 24,
   rotation: 0,
-  fontFamily: 'Helvetica, Arial, sans-serif',
+  fontFamily: "'Uni Sans Bold', 'Uni Sans', Helvetica, sans-serif",
   fontSize: 34,
   fontWeight: '400',
   letterSpacing: 0,
