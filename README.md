@@ -28,10 +28,16 @@ An entry containing a space is one cell with its words stacked, centred:
 ```sh
 npm install
 npm run dev      # http://localhost:5173
-npm run clear    # wipe dist/
-npm run build    # clear, then build the static bundle into dist/
+npm run clear    # wipe docs/
+npm run build    # clear, then build the static bundle into docs/
 npm test         # pattern generator unit tests (node:test)
 ```
+
+The build lands in `docs/` (committed) because GitHub Pages publishes either the
+repo root or `/docs` on the default branch — Settings → Pages → *Deploy from a
+branch* → `main` / `/docs`. Asset URLs are relative (`base: './'` in
+[vite.config.js](vite.config.js)) so the app also works from the project
+subpath, `https://<user>.github.io/patterntext/`.
 
 ## Controls
 
