@@ -28,7 +28,8 @@ An entry containing a space is one cell with its words stacked, centred:
 ```sh
 npm install
 npm run dev      # http://localhost:5173
-npm run build    # static bundle in dist/
+npm run clear    # wipe dist/
+npm run build    # clear, then build the static bundle into dist/
 npm test         # pattern generator unit tests (node:test)
 ```
 
