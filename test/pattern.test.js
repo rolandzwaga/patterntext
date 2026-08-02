@@ -20,7 +20,7 @@ test('parseWords splits on commas and newlines, trimming blanks', () => {
   assert.deepEqual(parseWords(' a, b ,\n c ,, '), ['a', 'b', 'c']);
 });
 
-test('grid mode alternates words and icons on a lattice', () => {
+test('the lattice alternates words and icons', () => {
   const { svg, wordCount, iconCount } = buildPattern({ ...base }, measure);
   assert.ok(wordCount > 0 && iconCount > 0);
   // Every lattice site is filled exactly once, by either a word or an icon.
@@ -63,12 +63,6 @@ test('words cycle through the list in reading order', () => {
   order.forEach((word, i) => assert.equal(word, base.words[i % base.words.length]));
 });
 
-test('flow mode packs rows using each word width', () => {
-  const { wordCount, iconCount } = buildPattern({ ...base, mode: 'flow' }, measure);
-  assert.ok(wordCount > 0);
-  assert.ok(Math.abs(wordCount - iconCount) <= wordCount);
-});
-
 test('rotation wraps the pattern and text is XML-escaped', () => {
   const { svg } = buildPattern({ ...base, words: ['a&b'], rotation: 30 }, measure);
   assert.ok(svg.includes('transform="rotate(30 200 150)"'));
@@ -83,12 +77,9 @@ test('the clip stays upright while the pattern rotates inside it', () => {
   assert.ok(!/<g clip-path="url\(#pt-clip\)"[^>]*transform=/.test(svg));
 });
 
-for (const [mode, rotation] of [
-  ['grid', 0], ['grid', 12], ['grid', 45], ['grid', -75], ['grid', 90],
-  ['flow', 30], ['flow', -45],
-]) {
-  test(`${mode} mode covers every canvas corner at ${rotation}°`, () => {
-    const opt = { ...base, mode, rotation, words: ['one', 'two three'] };
+for (const rotation of [0, 12, 45, -75, 90]) {
+  test(`the lattice covers every canvas corner at ${rotation}°`, () => {
+    const opt = { ...base, rotation, words: ['one', 'two three'] };
     const { svg } = buildPattern(opt, measure);
     const cells = [
       ...[...svg.matchAll(/<use [^>]*x="(-?[\d.]+)" y="(-?[\d.]+)"/g)],

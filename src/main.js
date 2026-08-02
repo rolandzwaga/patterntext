@@ -2,6 +2,9 @@ import { DEFAULT_ICON_SVG, parseCustomIcon } from './icons.js';
 import { DEFAULTS, buildPattern, parseWords } from './pattern.js';
 
 const STORAGE_KEY = 'patterntext:settings';
+// Bump whenever DEFAULTS change: saved settings from an older version are
+// discarded on load so the new defaults actually show up.
+const SETTINGS_VERSION = 2;
 const $ = (id) => document.getElementById(id);
 
 const fields = {
@@ -59,7 +62,6 @@ function readOptions() {
     words: parseWords(fields.words.value),
     customIcon: fields.customIcon.value,
     customStroke: fields.customStroke.checked,
-    mode: document.querySelector('input[name="mode"]:checked').value,
     width: Math.min(8000, Math.max(100, numberOf(fields.width, DEFAULTS.width))),
     height: Math.min(8000, Math.max(100, numberOf(fields.height, DEFAULTS.height))),
     gapX: numberOf(fields.gapX, DEFAULTS.gapX),
@@ -86,8 +88,6 @@ function applyOptions(opt) {
   // An empty field would leave the user with nothing to edit, so seed the default.
   fields.customIcon.value = (opt.customIcon ?? '').trim() || DEFAULT_ICON_SVG;
   fields.customStroke.checked = Boolean(opt.customStroke);
-  const modeInput = document.querySelector(`input[name="mode"][value="${opt.mode}"]`);
-  if (modeInput) modeInput.checked = true;
   for (const key of [
     'width', 'height', 'gapX', 'gapY', 'rotation', 'fontFamily', 'fontSize',
     'fontWeight', 'letterSpacing', 'lineHeight', 'iconSize', 'strokeWidth', 'iconRotate',
@@ -152,7 +152,7 @@ const renderSoon = debounce(render);
 
 function save(opt) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(opt));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: SETTINGS_VERSION, opt }));
   } catch {
     /* storage disabled — settings just won't persist */
   }
@@ -161,7 +161,15 @@ function save(opt) {
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) applyOptions(JSON.parse(raw));
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    // Settings from before a defaults change would silently mask the new ones,
+    // so anything stamped with an older version is dropped.
+    if (saved?.version !== SETTINGS_VERSION) {
+      localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+    applyOptions(saved.opt);
   } catch {
     /* ignore malformed saved state */
   }
@@ -214,8 +222,6 @@ for (const element of Object.values(fields)) {
   const event = element.type === 'checkbox' || element.tagName === 'SELECT' ? 'change' : 'input';
   element.addEventListener(event, renderSoon);
 }
-document.querySelectorAll('input[name="mode"]').forEach((el) => el.addEventListener('change', render));
-
 $('downloadSvg').addEventListener('click', () => {
   downloadBlob(new Blob([currentSvg], { type: 'image/svg+xml;charset=utf-8' }), `${baseName()}.svg`);
 });

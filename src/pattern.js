@@ -4,9 +4,8 @@ export const DEFAULTS = {
   words: ['love', 'peace', 'joy', 'stay wild'],
   customIcon: '',
   customStroke: false,
-  mode: 'grid', // 'grid' = strict lattice, 'flow' = packed rows
-  width: 1200,
-  height: 800,
+  width: 500,
+  height: 500,
   gapX: 24,
   gapY: 24,
   rotation: 0,
@@ -94,10 +93,7 @@ export function buildPattern(options, measure) {
   const texts = [];
   const uses = [];
   let cursor = 0;
-  const nextEntry = () => {
-    const index = cursor++ % entries.length;
-    return { lines: entries[index], width: entryWidths[index] };
-  };
+  const nextEntry = () => entries[cursor++ % entries.length];
 
   const placeWord = (x, y, lines) => {
     // SVG letter-spacing is also applied after the final glyph; shift back to re-centre.
@@ -120,37 +116,13 @@ export function buildPattern(options, measure) {
   };
 
   const rowCount = Math.ceil(reachY / halfStepY) + 1;
-
-  if (opt.mode === 'flow') {
-    for (let row = -rowCount; row <= rowCount; row++) {
-      const y = cy + row * halfStepY;
-      // Offset every other row so words never stack into vertical columns.
-      let x = cx - reachX - (row % 2 ? halfStepX : 0);
-      let wantsWord = (row & 1) === 0;
-      const limit = cx + reachX;
-      while (x < limit) {
-        if (wantsWord) {
-          const entry = nextEntry();
-          x += entry.width / 2;
-          placeWord(x, y, entry.lines);
-          x += entry.width / 2 + opt.gapX;
-        } else {
-          x += opt.iconSize / 2;
-          placeIcon(x, y);
-          x += opt.iconSize / 2 + opt.gapX;
-        }
-        wantsWord = !wantsWord;
-      }
-    }
-  } else {
-    const colCount = Math.ceil(reachX / halfStepX) + 1;
-    for (let row = -rowCount; row <= rowCount; row++) {
-      const y = cy + row * halfStepY;
-      for (let col = -colCount; col <= colCount; col++) {
-        const x = cx + col * halfStepX;
-        if (((col + row) & 1) === 0) placeWord(x, y, nextEntry().lines);
-        else placeIcon(x, y);
-      }
+  const colCount = Math.ceil(reachX / halfStepX) + 1;
+  for (let row = -rowCount; row <= rowCount; row++) {
+    const y = cy + row * halfStepY;
+    for (let col = -colCount; col <= colCount; col++) {
+      const x = cx + col * halfStepX;
+      if (((col + row) & 1) === 0) placeWord(x, y, nextEntry());
+      else placeIcon(x, y);
     }
   }
 

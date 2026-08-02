@@ -48,9 +48,8 @@ subpath, `https://<user>.github.io/patterntext/`.
   are stripped before inlining). The field starts on the default mark; *Restore
   default* puts it back. Anything unparseable falls back to that default. Non-
   square art keeps its aspect ratio — *Size* sets the longer side.
-- **Layout** — `Grid` aligns every cell to a strict lattice (cell width = widest
-  word), `Flow` packs each row by real word width and offsets alternate rows.
-  Canvas size, gaps and rotation live here too.
+- **Layout** — canvas size, gaps and rotation. Every cell is the same size
+  (as wide as the widest entry), so the lattice stays strict.
 - **Type / Icon size / Colours** — font, size, weight, tracking, leading (line
   spacing for stacked entries), uppercase, icon size, stroke width, icon tilt,
   and the three colours (transparent bg optional).
