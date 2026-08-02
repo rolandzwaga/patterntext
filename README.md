@@ -44,8 +44,10 @@ subpath, `https://<user>.github.io/patterntext/`.
 - **Words** — comma (or newline) separated; the list repeats. Spaces inside an
   entry stack it: `stay wild` renders as two lines in one cell, `stay, wild` as
   two separate cells.
-- **Icon** — 16 built-ins, or paste your own path data / a whole `<svg>` into the
-  custom field (scripts, `<image>` and `<use>` are stripped before inlining).
+- **Icon** — paste path data or a whole `<svg>` (scripts, `<image>` and `<use>`
+  are stripped before inlining). The field starts on the default mark; *Restore
+  default* puts it back. Anything unparseable falls back to that default. Non-
+  square art keeps its aspect ratio — *Size* sets the longer side.
 - **Layout** — `Grid` aligns every cell to a strict lattice (cell width = widest
   word), `Flow` packs each row by real word width and offsets alternate rows.
   Canvas size, gaps and rotation live here too.

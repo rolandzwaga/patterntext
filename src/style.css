@@ -102,7 +102,7 @@ input[type='color'] {
   border-radius: 6px;
 }
 
-.row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+.row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
 .check, .radio {
   display: flex;
   align-items: center;
@@ -115,25 +115,6 @@ input[type='color'] {
   cursor: pointer;
 }
 .check input, .radio input { accent-color: var(--accent); }
-
-.icon-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 5px;
-}
-.icon-btn {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  color: var(--text);
-  cursor: pointer;
-  padding: 0;
-}
-.icon-btn:hover { border-color: var(--muted); }
-.icon-btn.is-active { border-color: var(--accent); color: var(--accent); background: #2c2119; }
 
 .actions { display: grid; gap: 8px; }
 button {
@@ -148,6 +129,7 @@ button {
 button:hover { border-color: var(--muted); }
 button.primary { background: var(--accent); border-color: var(--accent); color: #1a0f0a; font-weight: 600; }
 button.ghost { background: none; color: var(--muted); }
+button.small { padding: 2px 8px; font-size: 12px; margin-left: auto; }
 
 /* ---------- stage ---------- */
 

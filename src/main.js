@@ -1,4 +1,4 @@
-import { ICONS, parseCustomIcon } from './icons.js';
+import { DEFAULT_ICON_SVG, parseCustomIcon } from './icons.js';
 import { DEFAULTS, buildPattern, parseWords } from './pattern.js';
 
 const STORAGE_KEY = 'patterntext:settings';
@@ -30,7 +30,6 @@ const fields = {
 
 const preview = $('preview');
 const status = $('status');
-let selectedIcon = DEFAULTS.iconId;
 let currentSvg = '';
 
 /* ---------- text measurement ---------- */
@@ -49,35 +48,6 @@ function makeMeasurer({ fontWeight, fontSize, fontFamily }) {
   };
 }
 
-/* ---------- icon picker ---------- */
-
-function buildIconGrid() {
-  const grid = $('iconGrid');
-  grid.innerHTML = ICONS.map((icon) => {
-    const body = icon.stroke
-      ? `<path d="${icon.d}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
-      : `<path d="${icon.d}" fill="currentColor"/>`;
-    return `<button type="button" class="icon-btn" data-icon="${icon.id}" title="${icon.name}" aria-label="${icon.name}">
-      <svg viewBox="0 0 24 24" width="22" height="22">${body}</svg>
-    </button>`;
-  }).join('');
-  grid.addEventListener('click', (event) => {
-    const button = event.target.closest('.icon-btn');
-    if (!button) return;
-    selectedIcon = button.dataset.icon;
-    fields.customIcon.value = '';
-    markSelectedIcon();
-    render();
-  });
-}
-
-function markSelectedIcon() {
-  const usingCustom = Boolean(fields.customIcon.value.trim());
-  document.querySelectorAll('.icon-btn').forEach((button) => {
-    button.classList.toggle('is-active', !usingCustom && button.dataset.icon === selectedIcon);
-  });
-}
-
 /* ---------- options <-> form ---------- */
 
 function readOptions() {
@@ -87,7 +57,6 @@ function readOptions() {
   };
   return {
     words: parseWords(fields.words.value),
-    iconId: selectedIcon,
     customIcon: fields.customIcon.value,
     customStroke: fields.customStroke.checked,
     mode: document.querySelector('input[name="mode"]:checked').value,
@@ -114,7 +83,8 @@ function readOptions() {
 
 function applyOptions(opt) {
   fields.words.value = Array.isArray(opt.words) ? opt.words.join(', ') : opt.words ?? '';
-  fields.customIcon.value = opt.customIcon ?? '';
+  // An empty field would leave the user with nothing to edit, so seed the default.
+  fields.customIcon.value = (opt.customIcon ?? '').trim() || DEFAULT_ICON_SVG;
   fields.customStroke.checked = Boolean(opt.customStroke);
   const modeInput = document.querySelector(`input[name="mode"][value="${opt.mode}"]`);
   if (modeInput) modeInput.checked = true;
@@ -127,7 +97,6 @@ function applyOptions(opt) {
   }
   fields.uppercase.checked = Boolean(opt.uppercase);
   fields.transparent.checked = Boolean(opt.transparent);
-  selectedIcon = opt.iconId || DEFAULTS.iconId;
 }
 
 /* ---------- render ---------- */
@@ -135,14 +104,13 @@ function applyOptions(opt) {
 function render() {
   const opt = readOptions();
   syncOutputs();
-  markSelectedIcon();
 
   const raw = opt.customIcon.trim();
   let custom = null;
   if (raw) {
     custom = parseCustomIcon(raw, { stroke: opt.customStroke });
     if (!custom) {
-      status.textContent = 'Custom icon: not valid path data or SVG — using the selected icon.';
+      status.textContent = 'Icon: not valid path data or SVG — falling back to the default.';
     }
   }
 
@@ -239,8 +207,8 @@ function exportPng() {
 
 /* ---------- wiring ---------- */
 
-buildIconGrid();
 load();
+if (!fields.customIcon.value.trim()) fields.customIcon.value = DEFAULT_ICON_SVG;
 
 for (const element of Object.values(fields)) {
   const event = element.type === 'checkbox' || element.tagName === 'SELECT' ? 'change' : 'input';
@@ -259,6 +227,11 @@ $('copySvg').addEventListener('click', async () => {
   } catch {
     status.textContent = 'Clipboard blocked — use Download SVG.';
   }
+});
+$('resetIcon').addEventListener('click', () => {
+  fields.customIcon.value = DEFAULT_ICON_SVG;
+  fields.customStroke.checked = false;
+  render();
 });
 $('reset').addEventListener('click', () => {
   localStorage.removeItem(STORAGE_KEY);

@@ -1,8 +1,7 @@
-import { getIcon } from './icons.js';
+import { DEFAULT_ICON } from './icons.js';
 
 export const DEFAULTS = {
   words: ['love', 'peace', 'joy', 'stay wild'],
-  iconId: 'chevrons',
   customIcon: '',
   customStroke: false,
   mode: 'grid', // 'grid' = strict lattice, 'flow' = packed rows
@@ -160,7 +159,7 @@ export function buildPattern(options, measure) {
 }
 
 function resolveIcon(opt) {
-  const icon = opt.customIcon ? opt.customIcon : getIcon(opt.iconId);
+  const icon = opt.customIcon || DEFAULT_ICON;
   return { viewBox: [0, 0, 24, 24], ...icon };
 }
 

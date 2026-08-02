@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { DEFAULT_ICON, DEFAULT_ICON_SVG } from '../src/icons.js';
 import { buildPattern, parseWords, splitLines } from '../src/pattern.js';
 
 // Deterministic stand-in for canvas text measurement.
@@ -177,4 +178,24 @@ test('uppercase and custom icon markup are honoured', () => {
   const { svg } = buildPattern({ ...base, uppercase: true, customIcon: custom }, measure);
   assert.ok(svg.includes('>ONE</text>'));
   assert.ok(svg.includes('<circle cx="5" cy="5" r="4"/>'));
+});
+
+test('with no custom icon the built-in default is used', () => {
+  const { svg } = buildPattern({ ...base }, measure);
+  assert.ok(svg.includes(DEFAULT_ICON.markup), 'default icon markup missing');
+  // Its box is taller than it is wide, so the longer side sets the icon size and
+  // the glyph is centred on its own viewBox rather than on 12,12.
+  const [, , boxW, boxH] = DEFAULT_ICON.viewBox;
+  const scale = Math.round((base.iconSize / Math.max(boxW, boxH)) * 100) / 100;
+  assert.ok(svg.includes(`scale(${scale})`), `expected scale(${scale})`);
+  const round = (v) => Math.round(v * 100) / 100;
+  assert.ok(svg.includes(`translate(${round(-boxW / 2)} ${round(-boxH / 2)})`));
+});
+
+test('the default icon source parses back to the default definition', () => {
+  // DEFAULT_ICON_SVG is what the UI shows; DEFAULT_ICON is what the generator
+  // draws. They are built from one path, so they must agree.
+  const viewBox = DEFAULT_ICON_SVG.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number);
+  assert.deepEqual(viewBox, DEFAULT_ICON.viewBox);
+  assert.ok(DEFAULT_ICON_SVG.includes(DEFAULT_ICON.markup));
 });
